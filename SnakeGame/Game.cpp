@@ -27,6 +27,7 @@ point keyPressed(point direction);
 void gotoxy(int x, int y);
 void setcolor(WORD color);
 void txtPlot(point item, unsigned char Color);
+point moveMouse();
 
 //Add function declarations here
 
@@ -49,13 +50,23 @@ void runGame() {
     chrono::time_point<chrono::system_clock> currentTime;
     runTime = std::chrono::system_clock::now();
     Sleep(300);
+    srand(time(0));
+
+    for (int x = -1; x < 20; x++) {
+        for (int y = -1; y < 20; y++) {
+            txtPlot({ x,y }, 73);
+        }
+
+    }
 
     point playerloc = { 0, 10 };
     point direction = { 1, 0 };
+    point mouse = { moveMouse()};
+    vector<point> tail;
     int length = 5;
 
     //Loop to start drawing and playing.
-	//while (keypress != key_ESCAPE) {
+	while (keypress != key_ESCAPE) {
 		
         direction = keyPressed(direction);
         
@@ -66,7 +77,48 @@ void runGame() {
             runTime = chrono::system_clock::now();
 
             //Most of your game logic goes here.
+           
+            txtPlot(playerloc, 15);
 
+            tail.push_back(playerloc);
+
+            playerloc.x += direction.x;
+            playerloc.y += direction.y;
+
+            if (playerloc.x > 19 || playerloc.y > 19 || playerloc.x < 0 || playerloc.y < 0) {
+                   
+                setcolor(15);
+                gotoxy(1,20);
+                _cprintf("You lose");
+                keypress = key_ESCAPE;
+            }
+            
+            if (playerloc.x == mouse.x && playerloc.y == mouse.y) {
+                length += 1;
+                mouse = moveMouse();
+
+            }
+            if (tail.size() > length) {
+                point erase = tail[0];
+                txtPlot(erase, 15);
+                tail.erase(tail.begin());
+            }
+
+            for (int i = 0; i < tail.size(); i++) {
+                if (playerloc.x == tail[i].x && playerloc.y == tail[i].y)
+                {
+                    setcolor(15);
+                    gotoxy(1, 20);
+                    _cprintf("You lose");
+                    keypress = key_ESCAPE;
+                }
+            }
+
+            for (int i = 0; i < tail.size(); i++) {
+                txtPlot(tail[i], 42);
+            }
+            
+            txtPlot(mouse, 120);
             txtPlot(playerloc, 31);
             
             setcolor(15);
@@ -77,7 +129,7 @@ void runGame() {
         }
 
 		Sleep(10);
-	//}
+	}
 }
 
 //Put function definitions here.
@@ -125,7 +177,7 @@ void txtPlot(point item, unsigned char Color)
 void gotoxy(int x, int y)
 {
     COORD coord;
-    coord.X = x; coord.Y = y;
+    coord.X = x+1; coord.Y = y+1;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
     return;
 }
@@ -136,3 +188,10 @@ void setcolor(WORD color)
     return;
 }
 
+point moveMouse() {
+    point temp;
+
+    temp.x = rand() % 20;
+    temp.y = rand() % 20;
+    return temp;
+}
