@@ -35,10 +35,10 @@ point moveMouse();
 int main() {
 
     //Uncomment the next four lines to see console color options 0-255
-    //for (int i = 0; i < 255; i++) {
-    //    setcolor(i);
-    //    _cprintf("Color option: %i. Hello, world.\n", i);
-    //}
+    for (int i = 0; i < 255; i++) {
+        setcolor(i);
+        _cprintf("Color option: %i. Hello, world.\n", i);
+    }
 
 	runGame();
 	return 0;
@@ -52,12 +52,7 @@ void runGame() {
     Sleep(300);
     srand(time(0));
 
-    for (int x = -1; x < 20; x++) {
-        for (int y = -1; y < 20; y++) {
-            txtPlot({ x,y }, 73);
-        }
-
-    }
+  
 
     point playerloc = { 0, 10 };
     point direction = { 1, 0 };
@@ -73,7 +68,7 @@ void runGame() {
         currentTime = chrono::system_clock::now();
 
         double elapsedTime = chrono::duration_cast<chrono::milliseconds>(currentTime - runTime).count();
-        if (elapsedTime > 0.3 * 1000) {
+        if (elapsedTime > 0.1 * 1000) {
             runTime = chrono::system_clock::now();
 
             //Most of your game logic goes here.
